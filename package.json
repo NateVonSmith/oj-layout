@@ -1,0 +1,27 @@
+{
+    "name": "oj-layout",
+    "version": "1.0.2",
+    "description": "Declarative flex/grid layout api using (s)css utility classes",
+    "prettier": "oranj-prettier-config",
+    "main": "index.js",
+    "files": [
+        "src/*.scss",
+        "src/*.css"
+    ],
+    "scripts": {
+        "compile": "node-sass --output-style expanded --source-map true --source-map-contents true --precision 6 src/_oj-layout.scss src/oj-layout.css",
+        "npm-publish": "npm version patch && npm publish"
+    },
+    "author": "Oranj",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://bitbucket.org/runoranj/oranj-js-project-config"
+    },
+    "homepage": "https://bitbucket.org/runoranj/oranj-js-project-config",
+    "devDependencies": {
+        "clean-css-cli": "^4.3.0",
+        "node-sass": "^4.14.1",
+        "oranj-prettier-config": "^1.0.3"
+    }
+}

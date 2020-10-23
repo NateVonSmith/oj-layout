@@ -1,0 +1,302 @@
+$prefix: 'oj';
+
+$widthMobile: 600px;
+$widthLaptop: 970px;
+$widthLarge: 1200px;
+
+$gap-sizes: 0 5 10 15 20 30;
+$flex-percents: 3 10 20 21 24 25 30 33 34 40 49 50 60 64 65 66 75 80 100;
+$grid-column-count: 1 2 3 4 6;
+$grid-cell-sizes: 80 100 120 140;
+
+@mixin full-width {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+@mixin row-gap-values {
+    @each $size in $gap-sizes {
+        &-gap {
+            &-#{$size} > * {
+                margin: 0 ($size / 2 * 1px);
+            }
+        }
+    }
+}
+
+@mixin column-gap-values {
+    @each $size in $gap-sizes {
+        &-gap {
+            &-#{$size} > * {
+                margin: ($size / 2 * 1px) 0;
+            }
+        }
+    }
+}
+
+@mixin row-gap {
+    &.#{$prefix} {
+        @include row-gap-values;
+    }
+
+    &[class*='#{$prefix}-gap-'] {
+        > * {
+            &:first-child {
+                margin-left: 0;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+@mixin column-gap {
+    &.#{$prefix} {
+        @include column-gap-values;
+    }
+
+    &[class*='#{$prefix}-gap-'] {
+        > * {
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+@mixin alt-size-reset($size-prefix) {
+    .#{$prefix}-column,
+    .#{$prefix}-row {
+        &[class*='#{$prefix}-gap-'] > * {
+            margin: 0;
+        }
+    }
+
+    &-row {
+        flex-direction: row;
+
+        &.#{$prefix}-lt-#{$size-prefix} {
+            @include row-gap-values();
+        }
+    }
+
+    &-column {
+        flex-direction: column;
+
+        &.#{$prefix}-lt-#{$size-prefix} {
+            @include column-gap-values();
+        }
+    }
+}
+
+.#{$prefix}-layout {
+    display: flex;
+    box-sizing: border-box;
+
+    &.#{$prefix} {
+        &-flex-fill {
+            height: 100%;
+            margin: 0;
+            min-height: 100%;
+            min-width: 100%;
+            width: 100%;
+        }
+
+        &-row {
+            @include row-gap();
+
+            > * {
+                &.#{$prefix}-flex {
+                    @each $percent in $flex-percents {
+                        &-#{$percent}-percent {
+                            width: $percent * 1%;
+                        }
+                    }
+                }
+            }
+        }
+
+        &-column {
+            @include column-gap();
+
+            flex-direction: column;
+
+            > * {
+                &.#{$prefix}-flex {
+                    @each $percent in $flex-percents {
+                        &-#{$percent}-percent {
+                            height: $percent * 1%;
+                        }
+                    }
+                }
+            }
+        }
+
+        &-start,
+        &-start-start {
+            place-content: flex-start;
+            align-items: flex-start;
+        }
+
+        &-end-center {
+            place-content: flex-end;
+            align-items: center;
+        }
+
+        &-start-center {
+            place-content: center flex-start;
+            align-items: center;
+        }
+
+        &-center,
+        &-center-center {
+            place-content: center;
+            align-items: center;
+        }
+
+        &-center-start {
+            place-content: flex-start center;
+            align-items: flex-start;
+        }
+
+        &-center-end {
+            place-content: flex-end center;
+            align-items: flex-end;
+        }
+
+        &-stretch-center {
+            align-items: center;
+
+            > * {
+                flex: 1 1 0%;
+            }
+        }
+
+        &-stretch-start {
+            align-items: start;
+
+            > * {
+                flex: 1 1 0%;
+            }
+        }
+
+        &-space-around-center {
+            place-content: center space-around;
+            align-items: center;
+        }
+
+        &-space-between-center {
+            place-content: center space-between;
+            align-items: center;
+        }
+
+        &-space-between-start {
+            place-content: center space-between;
+            align-items: start;
+        }
+
+        &-space-between-stretch {
+            place-content: center space-between;
+            align-items: stretch;
+        }
+
+        &-space-evenly > * {
+            flex-grow: 1;
+            flex-basis: 0;
+        }
+
+        @media (max-width: $widthMobile) {
+            &-lt-sm {
+                @include alt-size-reset('sm');
+            }
+        }
+
+        @media (max-width: $widthLaptop) {
+            &-lt-md {
+                @include alt-size-reset('md');
+            }
+        }
+
+        @media (max-width: $widthLarge) {
+            &-lt-lg {
+                @include alt-size-reset('lg');
+            }
+        }
+    }
+
+    > * {
+        &.#{$prefix}-stretch {
+            flex: 1 1 0%;
+        }
+    }
+}
+
+.#{$prefix}-grid {
+    display: grid;
+    grid-auto-rows: minmax(auto, auto);
+    grid-template-columns: repeat(4, 1fr);
+
+    @each $size in $grid-cell-sizes {
+        &.#{$prefix}-cell-#{$size} {
+            grid-auto-rows: 1fr;
+            grid-template-columns: repeat(auto-fill, minmax($size * 1px, 1fr));
+        }
+    }
+
+    &[class*='#{$prefix}-cell-'] {
+        &::before {
+            content: '';
+            width: 0;
+            padding-bottom: 100%;
+            grid-row: 1 / 1;
+            grid-column: 1 / 1;
+        }
+
+        & > *:first-child {
+            grid-row: 1 / 1;
+            grid-column: 1 / 1;
+        }
+    }
+
+    @each $colCount in $grid-column-count {
+        &.#{$prefix}-grid-columns-#{$colCount} {
+            grid-template-columns: repeat($colCount, 1fr);
+        }
+    }
+
+    @each $size in $gap-sizes {
+        &.#{$prefix}-gap-#{$size} {
+            grid-gap: $size * 1px;
+        }
+    }
+
+    @media (max-width: $widthLaptop) {
+        @each $colCount in $grid-column-count {
+            &.#{$prefix}-lt-md-grid-columns-#{$colCount} {
+                grid-template-columns: repeat($colCount, 1fr);
+            }
+        }
+    }
+
+    @media (max-width: $widthMobile) {
+        @each $colCount in $grid-column-count {
+            &.#{$prefix}-lt-sm-grid-columns-#{$colCount} {
+                grid-template-columns: repeat($colCount, 1fr);
+            }
+        }
+    }
+}
+
+@media (max-width: $widthMobile) {
+    .#{$prefix}-layout.#{$prefix}-lt-sm-column.#{$prefix}-space-evenly > * {
+        flex-grow: initial;
+        flex-basis: initial;
+    }
+}
